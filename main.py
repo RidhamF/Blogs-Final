@@ -103,6 +103,7 @@ def register():
             db.session.add(user)
             login_user(user)
             logged_in = True
+            db.session.commit()
             return redirect(url_for('get_all_posts'))
     return render_template("register.html",form=form)
 
