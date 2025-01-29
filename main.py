@@ -96,6 +96,7 @@ def register():
         emails = [user.email for user in db.session.execute(db.select(User)).scalars().all()]
         if form.email.data in emails:
             flash("Email already in use. Login instead")
+            logged_in = False
             return redirect(url_for('login'))
         else:
             hash = generate_password_hash(form.password.data,"pbkdf2:sha256",8)
@@ -122,13 +123,14 @@ def login():
                 user = db.session.execute(db.select(User).where(User.email==email)).scalar()
                 logged_in = True
                 login_user(user)
-                db.session.expunge(user)
                 return redirect(url_for("get_all_posts"))
             else:
                 flash("Wrong Password")
+                logged_in = False
                 return redirect(url_for("login"))
         else:
             flash("No such user")
+            logged_in = False
             return redirect(url_for("login"))
 
     return render_template("login.html",form=form)
