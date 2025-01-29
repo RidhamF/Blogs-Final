@@ -104,6 +104,7 @@ def register():
             db.session.add(user)
             login_user(user)
             logged_in = True
+            db.session.expaunge(user)
             db.session.commit()
             return redirect(url_for('get_all_posts'))
     return render_template("register.html",form=form)
@@ -123,6 +124,8 @@ def login():
                 user = db.session.execute(db.select(User).where(User.email==email)).scalar()
                 logged_in = True
                 login_user(user)
+                db.session.expaunge(user)
+                db.session.commit()
                 return redirect(url_for("get_all_posts"))
             else:
                 flash("Wrong Password")
