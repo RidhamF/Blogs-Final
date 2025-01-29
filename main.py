@@ -103,6 +103,7 @@ def register():
             user = User(email=form.email.data,password=hash,name=form.name.data)
             db.session.add(user)
             login_user(user)
+            current_user = user
             logged_in = True
             db.session.commit()
             return redirect(url_for('get_all_posts'))
@@ -122,6 +123,7 @@ def login():
             if check_password_hash(password,form.password.data):
                 user = db.session.execute(db.select(User).where(User.email==email)).scalar()
                 logged_in = True
+                current_user = user
                 login_user(user)
                 return redirect(url_for("get_all_posts"))
             else:
@@ -170,7 +172,6 @@ def show_post(post_id):
 # TODO: Use a decorator so only an admin user can create a new post
 @login_required
 @app.route("/new-post", methods=["GET", "POST"])
-@admin_only
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
